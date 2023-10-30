@@ -5,32 +5,29 @@ namespace SimpleBankingApp
     internal class CustomerAccount
     {
         public string _name; 
-        public string _password; 
+        //public string _password; 
         public string _accountNumber;
         public double _startingBalance;
         public string _depositAmmount;
+        public string _withdrawAmmount;
         public double _currentBalance;
-        public string userAccountAction;
         private bool userAccountBool;
-        private string userInput;
 
 
-        public CustomerAccount(string name, string password, string accountNumber, double startingBalance)
+
+        public CustomerAccount(string name, /*string password,*/ string accountNumber, double startingBalance)
         {
             _name = name;
-            _password = password;
+            //_password = password;
             _accountNumber = accountNumber;
             _startingBalance = startingBalance;
             _currentBalance = startingBalance;
         }
 
-/*
-        Should this be split into multiple methods? One for each action you can take?
-            --- The AccountLogin meathod would then have a loop to have an action until the user is completed with their transaction.*/
         public void AccountLogin()
         {
             userAccountBool = true;
-
+            string userAccountAction;
 
             while (userAccountBool == true)
             {
@@ -41,12 +38,12 @@ namespace SimpleBankingApp
                 switch (userAccountAction)
                 {
                     case "1":
-                        Console.WriteLine(_name);
+                        Console.WriteLine($"The name on the account is: {_name}");
                         userAccountBool = false;
                         UserAccountBool();
                         break;
                     case "2":
-                        Console.WriteLine($"${_currentBalance}");
+                        Console.WriteLine($"Your current balance is: ${_currentBalance}");
                         userAccountBool = false;
                         UserAccountBool();
                         break;
@@ -56,7 +53,7 @@ namespace SimpleBankingApp
                         UserAccountBool();
                         break;
                     case "4":
-                        Console.WriteLine("Withdraw");
+                        Withdraw();
                         userAccountBool = false;
                         UserAccountBool();
                         break;
@@ -65,23 +62,6 @@ namespace SimpleBankingApp
                         break;
                 }
                
-            }
-        }
-
-        void UserAccountBool()
-        {
-            while (userAccountBool == false)
-            {
-                Console.WriteLine("\nDo you wish to perform another transaction?\n   Press 'y' for yes, any other key for no.");
-                userInput = Console.ReadLine();
-                if (userInput == "y")
-                {
-                    userAccountBool = true;
-                }
-                else
-                {
-                    break;
-                }
             }
         }
 
@@ -100,6 +80,54 @@ namespace SimpleBankingApp
             {
                 _currentBalance += depositNum;
                 Console.WriteLine($"Your current balance is: ${_currentBalance}");
+            }
+            else 
+            { 
+                Console.WriteLine("Deposits must be a positive value");
+            }
+        }
+
+        void Withdraw()
+        {
+            double withNum;
+
+            Console.WriteLine($"Your current balance is ${_currentBalance}, How much would you like to withdraw: ");
+            _withdrawAmmount = Console.ReadLine();
+            while (!double.TryParse(_withdrawAmmount, out withNum))
+            {
+                Console.WriteLine("That is not a valid value. Please enter a valid amount: ");
+                _withdrawAmmount = Console.ReadLine();
+            }
+
+            if (_currentBalance - withNum <= 0)
+            {
+                Console.WriteLine("That ammount with overdraw your account. Please try again");
+            }
+            else
+            {
+                _currentBalance -= withNum;
+                Console.WriteLine($"You have withdrawn ${withNum}, your current balance is ${_currentBalance}");
+            }
+
+        }
+
+        void UserAccountBool()
+        {
+            while (userAccountBool == false)
+            {
+                Console.WriteLine("\nDo you wish to perform another transaction?\n   Press 'y' for yes, any other key for no.");
+                char userInput = Console.ReadKey().KeyChar;
+                if (userInput == 'y')
+                {
+                    Console.WriteLine("\n\n");
+                    userAccountBool = true;
+                }
+                else
+                {
+                    Console.WriteLine("\n\nGoign back to login screen.\n\n");
+                    BankingApp.LoginScreen();
+                    break;
+                }
             }
         }
 

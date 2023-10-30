@@ -1,16 +1,31 @@
 ﻿using System.Diagnostics;
+using System.Security.Cryptography.X509Certificates;
 
 namespace SimpleBankingApp;
 
 class BankingApp
 {
+    static List<CustomerAccount> accounts = new List<CustomerAccount>();
+
+
+
     static void Main(string[] args)
+    {
+        AccountCreation("John", /*"123abc",*/ "12345", 100.00);
+        AccountCreation("Alice", /*"456def",*/ "67890", 200.00);
+        LoginScreen();
+    }
+
+    static void AccountCreation(string name, /*string password,*/ string accountNumber, double startingBalance)
+    {
+        CustomerAccount account = new CustomerAccount(name, /*password,*/ accountNumber, startingBalance);
+        accounts.Add(account);
+
+    }
+    public static void LoginScreen()
     {
         int loginAttempt = 1;
         bool correctAcct = false;
-
-
-        CustomerAccount account1 = new CustomerAccount("John", "123abc", "12345", 100.00);
 
         if (loginAttempt >= 5)
         {
@@ -23,11 +38,13 @@ class BankingApp
                 Console.WriteLine("What is your Account Number?: ");
                 string userAcctInput = Console.ReadLine();
 
-                if (userAcctInput == account1._accountNumber)
+                // Iterate through the list of accounts to find a matching account
+                CustomerAccount matchedAccount = accounts.Find(account => account._accountNumber == userAcctInput);
+
+                if (matchedAccount != null)
                 {
- // Main loop for the app
                     correctAcct = true;
-                    account1.AccountLogin();
+                    matchedAccount.AccountLogin();
                 }
                 else if (loginAttempt == 5)
                 {
