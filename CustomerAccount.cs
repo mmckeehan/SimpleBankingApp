@@ -1,8 +1,6 @@
-﻿using System.Diagnostics;
-
-namespace SimpleBankingApp
+﻿namespace SimpleBankingApp
 {
-    internal class CustomerAccount
+    internal class CustomerAccount: Account
     {
         public string _name; 
         //public string _password; 
@@ -11,7 +9,7 @@ namespace SimpleBankingApp
         public string _depositAmmount;
         public string _withdrawAmmount;
         public double _currentBalance;
-        private bool userAccountBool;
+        double withNum;
 
 
 
@@ -24,38 +22,43 @@ namespace SimpleBankingApp
             _currentBalance = startingBalance;
         }
 
-        public void AccountLogin()
+        public void AccountScreen()
         {
-            userAccountBool = true;
-            string userAccountAction;
+            accountBool = true;
+            char userAccountAction;
 
-            while (userAccountBool == true)
+            while (accountBool == true)
             {
+                Console.Clear();
                 Console.WriteLine("Please select the NUMBER from the following options:");
                 Console.WriteLine("   1. Look up name\n   2. Look up current balance\n   3. Deposit\n   4. Withdraw");
-                userAccountAction = Console.ReadLine();
+                userAccountAction = Console.ReadKey().KeyChar;
 
                 switch (userAccountAction)
                 {
-                    case "1":
+                    case '1':
+                        Console.Clear();
                         Console.WriteLine($"The name on the account is: {_name}");
-                        userAccountBool = false;
-                        UserAccountBool();
+                        accountBool = false;
+                        AccountBool();
                         break;
-                    case "2":
+                    case '2':
+                        Console.Clear();
                         Console.WriteLine($"Your current balance is: ${_currentBalance}");
-                        userAccountBool = false;
-                        UserAccountBool();
+                        accountBool = false;
+                        AccountBool();
                         break;
-                    case "3":
+                    case '3':
+                        Console.Clear();
                         Deposit();
-                        userAccountBool = false;
-                        UserAccountBool();
+                        accountBool = false;
+                        AccountBool();
                         break;
-                    case "4":
+                    case '4':
+                        Console.Clear();
                         Withdraw();
-                        userAccountBool = false;
-                        UserAccountBool();
+                        accountBool = false;
+                        AccountBool();
                         break;
                     default: 
                         Console.WriteLine("\nThat is not a valid selection, please try again.\n");
@@ -89,21 +92,15 @@ namespace SimpleBankingApp
 
         void Withdraw()
         {
-            double withNum;
-
             Console.WriteLine($"Your current balance is ${_currentBalance}, How much would you like to withdraw: ");
-            _withdrawAmmount = Console.ReadLine();
-            while (!double.TryParse(_withdrawAmmount, out withNum))
+            AmmountWithdraw();
+            while (_currentBalance - withNum <= 0)
             {
-                Console.WriteLine("That is not a valid value. Please enter a valid amount: ");
-                _withdrawAmmount = Console.ReadLine();
+                Console.WriteLine("That ammount will overdraw your account. Please try again:");
+                AmmountWithdraw();
             }
 
-            if (_currentBalance - withNum <= 0)
-            {
-                Console.WriteLine("That ammount with overdraw your account. Please try again");
-            }
-            else
+            if (_currentBalance - withNum >= 0)
             {
                 _currentBalance -= withNum;
                 Console.WriteLine($"You have withdrawn ${withNum}, your current balance is ${_currentBalance}");
@@ -111,23 +108,13 @@ namespace SimpleBankingApp
 
         }
 
-        void UserAccountBool()
+        void AmmountWithdraw()
         {
-            while (userAccountBool == false)
+            _withdrawAmmount = Console.ReadLine();
+            while (!double.TryParse(_withdrawAmmount, out withNum))
             {
-                Console.WriteLine("\nDo you wish to perform another transaction?\n   Press 'y' for yes, any other key for no.");
-                char userInput = Console.ReadKey().KeyChar;
-                if (userInput == 'y')
-                {
-                    Console.WriteLine("\n\n");
-                    userAccountBool = true;
-                }
-                else
-                {
-                    Console.WriteLine("\n\nGoign back to login screen.\n\n");
-                    BankingApp.LoginScreen();
-                    break;
-                }
+                Console.WriteLine("That is not a valid value. Please enter a valid amount: ");
+                _withdrawAmmount = Console.ReadLine();
             }
         }
 
